@@ -38,16 +38,22 @@ function publicOutcome(value: string): Outcome {
   return "refused";
 }
 
+export function forcedToolFailure(mode: RunMode, requested: boolean | undefined): boolean {
+  return mode !== "live" && requested === true;
+}
+
 export async function runTurn(input: RunInput): Promise<RunResult> {
   const mode = input.mode ?? resolveMode();
   const startedAt = Date.now();
-  const ops = input.simulateToolFailure
-    ? createCatalogOps({
-        read() {
-          throw new Error("timeout");
-        },
-      })
-    : (input.ops ?? createCatalogOps());
+  const ops =
+    input.ops ??
+    (forcedToolFailure(mode, input.simulateToolFailure)
+      ? createCatalogOps({
+          read() {
+            throw new Error("timeout");
+          },
+        })
+      : createCatalogOps());
   const model =
     input.model ?? (mode === "live" ? createLiveModel() : createLocalModel());
 
