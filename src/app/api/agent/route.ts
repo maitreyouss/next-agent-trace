@@ -2,12 +2,9 @@ import { z } from "zod";
 
 import { streamTurn } from "@/lib/agent/stream";
 import { resolveMode } from "@/lib/agent/run";
-import { allow, clientKey } from "@/lib/http/rate-limit";
+import { allow, clientKey, runLimit } from "@/lib/http/rate-limit";
 
 export const dynamic = "force-dynamic";
-
-const LIVE_LIMIT = 20;
-const HOUR_MS = 60 * 60 * 1000;
 
 const bodySchema = z.object({
   message: z.string().trim().min(1).max(500),
@@ -31,11 +28,9 @@ export async function POST(request: Request) {
   }
 
   const mode = resolveMode();
-  if (mode === "live" && !allow(clientKey(request), LIVE_LIMIT, HOUR_MS)) {
-    return Response.json(
-      { error: "Model rate limit reached. Try again later." },
-      { status: 429 },
-    );
+  const limit = runLimit(mode);
+  if (!allow(clientKey(request), limit.limit, limit.windowMs)) {
+    return Response.json({ error: "Too many runs. Try again later." }, { status: 429 });
   }
 
   const encoder = new TextEncoder();
