@@ -1,36 +1,51 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# next-agent-trace
 
-## Getting Started
+A run earns its sentence. The agent quotes a closed ledger of twenty run rules. It may speak only after a card is opened. If the card is not there, the run stops.
 
-First, run the development server:
+[![ci](https://github.com/maitreyouss/next-agent-trace/actions/workflows/ci.yml/badge.svg)](https://github.com/maitreyouss/next-agent-trace/actions/workflows/ci.yml)
+
+## Problem
+
+A demo that invents a fact is not a run. Here the sentence is a quote from one opened card, or it is a refusal, or it is a fallback. The guardrail is in the graph: an empty search or a failed tool drops whatever the model was about to say.
+
+The ledger is the rule set for that behavior. Refusal, fallback, a frozen eval, two tools, no key on the public run. It is not a catalog of products.
+
+## Stack
+
+TypeScript, React, Next.js, LangGraph.js, Zod, Vitest.
+
+Bricolage Grotesque, IBM Plex Sans, IBM Plex Mono. Ink on `#09090b`, amber for the mark, mint only on a finished run.
+
+## Run
 
 ```bash
+npm install
+cp .env.example .env.local
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Without `OPENAI_API_KEY`, the same graph runs on a local planner. No network call. `DEMO=true` forces that path even when a key is present. That is the public setting.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+With a key, the model node calls `OPENAI_MODEL` (default `gpt-4o-mini`). Cap: 20 requests per hour per IP, held in process memory.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm test
+npm run lint
+npm run typecheck
+```
 
-## Learn More
+## What the tests cover
 
-To learn more about Next.js, take a look at the following resources:
+Three frozen cases, no model call:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- card opened: search, open, quote the Refusal rule and its 240 ms budget
+- no card: the run stops, including when the model offers an invented sentence
+- tool failed: the open is called, then one fallback line, without rebuilding the card
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Demo
 
-## Deploy on Vercel
+Deploy on Vercel with `DEMO=true` and no key. A visitor replays the three runs from the page. The demo link will be added here once the deployment is wired.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## License
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+[MIT](LICENSE)
