@@ -37,11 +37,14 @@ export async function POST(request: Request) {
   const stream = new ReadableStream({
     async start(controller) {
       try {
-        for await (const event of streamTurn({
-          message: parsed.data.message,
-          simulateToolFailure: parsed.data.simulateToolFailure,
-          mode,
-        })) {
+        for await (const event of streamTurn(
+          {
+            message: parsed.data.message,
+            simulateToolFailure: parsed.data.simulateToolFailure,
+            mode,
+          },
+          request.signal,
+        )) {
           controller.enqueue(encoder.encode(`${JSON.stringify(event)}\n`));
         }
       } catch {
