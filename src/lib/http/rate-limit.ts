@@ -1,4 +1,11 @@
+const HOUR_MS = 60 * 60 * 1000;
+
 const buckets = new Map<string, number[]>();
+
+export function runLimit(mode: "live" | "demo" | "local") {
+  if (mode === "live") return { limit: 20, windowMs: HOUR_MS };
+  return { limit: 60, windowMs: HOUR_MS };
+}
 
 export function allow(
   key: string,

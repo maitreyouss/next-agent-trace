@@ -26,7 +26,7 @@ npm run dev
 
 Without `OPENAI_API_KEY`, the same graph runs on a local planner. No network call. `DEMO=true` forces that path even when a key is present. That is the public setting.
 
-With a key, the model node calls `OPENAI_MODEL` (default `gpt-4o-mini`). Cap: 20 requests per hour per IP, held in process memory.
+With a key, the model node calls `OPENAI_MODEL` (default `gpt-4o-mini`). Every mode is capped per IP, in the memory of the process: 20 runs an hour with a key, 60 without. A new process starts the count again.
 
 ```bash
 npm test
