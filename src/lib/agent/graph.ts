@@ -211,14 +211,23 @@ export function buildGraph(model: AgentModel, ops: CatalogOps) {
     .compile();
 }
 
+const compiledGraphs = new Map<string, ReturnType<typeof buildGraph>>();
+
+export function compiledGraphCount(): number {
+  return compiledGraphs.size;
+}
+
 export async function invokeGraph(input: {
   message: string;
   model: AgentModel;
   ops: CatalogOps;
   startedAt?: number;
+  cacheKey?: string;
 }) {
   const startedAt = input.startedAt ?? Date.now();
-  const graph = buildGraph(input.model, input.ops);
+  const cached = input.cacheKey ? compiledGraphs.get(input.cacheKey) : undefined;
+  const graph = cached ?? buildGraph(input.model, input.ops);
+  if (input.cacheKey && !cached) compiledGraphs.set(input.cacheKey, graph);
   return graph.invoke(
     {
       messages: [new SystemMessage(SYSTEM_PROMPT), new HumanMessage(input.message)],

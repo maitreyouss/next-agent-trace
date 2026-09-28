@@ -17,15 +17,35 @@ export type ClientEvent =
       mode: RunMode;
     };
 
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+function sleep(ms: number, signal?: AbortSignal) {
+  if (signal?.aborted) return Promise.resolve();
+  return new Promise<void>((resolve) => {
+    const timer = setTimeout(finish, ms);
+    function finish() {
+      signal?.removeEventListener("abort", onAbort);
+      resolve();
+    }
+    function onAbort() {
+      clearTimeout(timer);
+      finish();
+    }
+    signal?.addEventListener("abort", onAbort, { once: true });
+  });
+}
 
-export async function* streamTurn(input: RunInput): AsyncGenerator<ClientEvent> {
+export async function* streamTurn(
+  input: RunInput,
+  signal?: AbortSignal,
+): AsyncGenerator<ClientEvent> {
+  if (signal?.aborted) return;
   const result = await runTurn(input);
+  if (signal?.aborted) return;
   yield { type: "meta", mode: result.mode, budgetMs: REQUEST_BUDGET_MS };
 
   const showRealClock = result.latencyMs >= 80;
   let elapsed = 0;
   for (const line of result.traces) {
+    if (signal?.aborted) return;
     elapsed += STEP_MS;
     yield {
       type: "trace",
@@ -33,15 +53,17 @@ export async function* streamTurn(input: RunInput): AsyncGenerator<ClientEvent> 
       label: line.label,
       state: line.state,
     };
-    await sleep(showRealClock ? 40 : STEP_MS);
+    await sleep(showRealClock ? 40 : STEP_MS, signal);
   }
 
   for (const part of result.answer.split(/(\s+)/)) {
+    if (signal?.aborted) return;
     if (!part) continue;
     yield { type: "token", text: part };
-    if (part.trim()) await sleep(TOKEN_MS);
+    if (part.trim()) await sleep(TOKEN_MS, signal);
   }
 
+  if (signal?.aborted) return;
   yield {
     type: "done",
     outcome: result.outcome,
