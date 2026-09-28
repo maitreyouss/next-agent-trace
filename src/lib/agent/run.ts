@@ -8,6 +8,9 @@ import {
 } from "@/lib/agent/model";
 import { formatElapsed, type Outcome, type TraceLine } from "@/lib/agent/trace";
 
+const localModel = createLocalModel();
+const liveModel = createLiveModel();
+
 export type RunMode = "demo" | "local" | "live";
 
 export type RunInput = {
@@ -42,6 +45,12 @@ export function forcedToolFailure(mode: RunMode, requested: boolean | undefined)
   return mode !== "live" && requested === true;
 }
 
+function graphCacheKey(input: RunInput, mode: RunMode): string | undefined {
+  if (input.model || input.ops) return undefined;
+  if (mode === "live") return "live";
+  return forcedToolFailure(mode, input.simulateToolFailure) ? "planner-failure" : "planner";
+}
+
 export async function runTurn(input: RunInput): Promise<RunResult> {
   const mode = input.mode ?? resolveMode();
   const startedAt = Date.now();
@@ -54,8 +63,8 @@ export async function runTurn(input: RunInput): Promise<RunResult> {
           },
         })
       : createCatalogOps());
-  const model =
-    input.model ?? (mode === "live" ? createLiveModel() : createLocalModel());
+  const model = input.model ?? (mode === "live" ? liveModel : localModel);
+  const cacheKey = graphCacheKey(input, mode);
 
   try {
     const state = await invokeGraph({
@@ -63,6 +72,7 @@ export async function runTurn(input: RunInput): Promise<RunResult> {
       model,
       ops,
       startedAt,
+      cacheKey,
     });
     const latencyMs = Date.now() - startedAt;
     const traces = [...state.traces];
