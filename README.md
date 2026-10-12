@@ -44,7 +44,13 @@ Three frozen cases, no model call:
 
 ## Demo
 
-Deploy on Vercel with `DEMO=true` and no key. A visitor replays the three runs from the page. The demo link will be added here once the deployment is wired.
+[next-agent-trace.vercel.app](https://next-agent-trace.vercel.app)
+
+`DEMO=true`, no key. A visitor replays the three runs from the page:
+
+- What does the refusal card allow?
+- Who keeps the atlas card?
+- Open the fallback card. The tool-failed control must be on.
 
 ## License
 
