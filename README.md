@@ -12,7 +12,7 @@ The ledger is the rule set for that behavior. Refusal, fallback, a frozen eval, 
 
 ## Stack
 
-TypeScript, React, Next.js, LangGraph.js, Zod, Vitest.
+TypeScript, React, Next.js, LangGraph.js, Zod, Vitest, Playwright.
 
 Bricolage Grotesque, IBM Plex Sans, IBM Plex Mono. Ink on `#09090b`, amber for the mark, mint only on a finished run.
 
@@ -32,11 +32,15 @@ With a key, the model node calls `OPENAI_MODEL` (default `gpt-4o-mini`). Every m
 npm test
 npm run lint
 npm run typecheck
+npm run build
+npm run test:e2e
 ```
+
+`test:e2e` opens the built app and replays the three buttons. On a machine, it uses the installed Chrome. CI installs Chromium.
 
 ## What the tests cover
 
-Three frozen cases, no model call:
+Three frozen cases, no model call, also replayed in the browser:
 
 - card opened: search, open, quote the Refusal rule and its 240 ms budget
 - no card: the run stops, including when the model offers an invented sentence

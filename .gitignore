@@ -12,6 +12,9 @@
 
 # testing
 /coverage
+/test-results/
+/playwright-report/
+/blob-report/
 
 # next.js
 /.next/
@@ -22,6 +25,7 @@
 
 # misc
 .DS_Store
+.cursor/rules/plan-du-jour.mdc
 *.pem
 
 # debug
