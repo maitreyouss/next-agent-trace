@@ -24,7 +24,7 @@ export const CATALOG: LedgerCard[] = [
     owner: "Trace",
     latencyBudgetMs: 240,
     status: "ok",
-    summary: "If the ledger has no card, the run stops. No nearest guess.",
+    summary: "Si la carte n’est pas dans le registre, l’agent s’arrête. Il ne prend pas une autre carte.",
   },
   {
     id: "fallback",

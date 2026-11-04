@@ -7,18 +7,18 @@ import type { Outcome, TraceLine } from "@/lib/agent/trace";
 
 const EXAMPLES = [
   {
-    label: "Card opened",
-    message: "What does the refusal card allow?",
+    label: "Carte ouverte",
+    message: "Que permet la carte Refusal ?",
     failure: false,
   },
   {
-    label: "No card",
-    message: "Who keeps the atlas card?",
+    label: "Pas de carte",
+    message: "Qui garde la carte atlas ?",
     failure: false,
   },
   {
-    label: "Tool failed",
-    message: "Open the fallback card.",
+    label: "Outil en échec",
+    message: "Ouvre la carte Fallback.",
     failure: true,
   },
 ] as const;
@@ -92,13 +92,13 @@ export function AgentConsole({ serviceNames }: { serviceNames: string[] }) {
 
       if (!response.ok) {
         const payload = (await response.json().catch(() => null)) as { error?: string } | null;
-        setError(payload?.error ?? "The request failed.");
+        setError(payload?.error ?? "La requête a échoué.");
         return;
       }
 
       const reader = response.body?.getReader();
       if (!reader) {
-        setError("Empty response.");
+        setError("Réponse vide.");
         return;
       }
 
@@ -135,7 +135,7 @@ export function AgentConsole({ serviceNames }: { serviceNames: string[] }) {
       }
     } catch (caught) {
       if (caught instanceof DOMException && caught.name === "AbortError") return;
-      setError("The request failed.");
+      setError("La requête a échoué.");
     } finally {
       if (abortRef.current === controller) setRunning(false);
     }
@@ -160,13 +160,13 @@ export function AgentConsole({ serviceNames }: { serviceNames: string[] }) {
         <div>
           <p className="mb-8 inline-flex items-center gap-2.5 rounded-pill border border-line-strong px-3 py-1.5 font-mono text-[13.5px] text-ink-secondary">
             <span aria-hidden="true" className="live-dot size-1.5 rounded-full bg-accent" />
-            Closed ledger · Paris
+            Registre fermé · Paris
           </p>
-          <h1 className="mb-6 max-w-[14ch] font-display text-[clamp(36px,5.6vw,62px)] leading-[1.02] font-semibold tracking-[-0.035em] text-balance text-ink-primary">
-            A run earns its sentence.
+          <h1 className="mb-6 max-w-[16ch] font-display text-[clamp(36px,5.6vw,62px)] leading-[1.02] font-semibold tracking-[-0.035em] text-balance text-ink-primary">
+            Il cite la carte ouverte.
           </h1>
           <p className="mb-10 max-w-[58ch] text-[clamp(17px,1.7vw,20px)] leading-[1.6] text-ink-secondary text-pretty">
-            Twenty rules, written once. The agent may quote a card it opened. If the card is not in the ledger, the run stops.
+            Vingt règles, écrites une fois. S’il n’a pas ouvert la carte, il s’arrête. Il ne prend pas une autre carte à la place.
           </p>
 
           <form
@@ -177,7 +177,7 @@ export function AgentConsole({ serviceNames }: { serviceNames: string[] }) {
             }}
           >
             <label className="font-mono text-[13px] text-ink-tertiary" htmlFor="question">
-              Run
+              Question
             </label>
             <div className="flex flex-col gap-2 sm:flex-row">
               <input
@@ -194,7 +194,7 @@ export function AgentConsole({ serviceNames }: { serviceNames: string[] }) {
                 disabled={running || message.trim().length === 0}
                 className="h-12 rounded-control bg-ink-primary px-5 text-[15.5px] font-medium text-page transition-colors duration-200 hover:bg-ink disabled:opacity-50"
               >
-                {running ? "Running" : "Run"}
+                {running ? "En cours" : "Lancer"}
               </button>
             </div>
           </form>
@@ -214,21 +214,21 @@ export function AgentConsole({ serviceNames }: { serviceNames: string[] }) {
           </div>
 
           <div className="mt-8 border-t border-line pt-6">
-            <p className="mb-3 font-mono text-[13px] text-ink-tertiary">Sentence</p>
+            <p className="mb-3 font-mono text-[13px] text-ink-tertiary">Réponse</p>
             <p aria-live="polite" className={`min-h-16 text-[17px] leading-[1.6] text-pretty ${sentenceClass}`}>
-              {error || answer || (running ? "…" : "The sentence follows the trace.")}
+              {error || answer || (running ? "…" : "Lance un des trois cas.")}
             </p>
           </div>
 
           <p className="mt-7 flex flex-wrap gap-x-6 gap-y-2 border-t border-line pt-6 font-mono text-[13.5px] text-ink-tertiary">
             <span>Trace</span>
-            <span>Test</span>
-            <span>Latency budget</span>
+            <span>Essai</span>
+            <span>Budget</span>
           </p>
         </div>
 
         <section
-          aria-label="Request trace"
+          aria-label="Trace de la requête"
           className="overflow-hidden rounded-panel border border-line bg-page-alt shadow-panel"
         >
           <div className="flex items-center justify-between gap-4 border-b border-line bg-surface px-[18px] py-3.5">
@@ -240,7 +240,7 @@ export function AgentConsole({ serviceNames }: { serviceNames: string[] }) {
           <div className="flex min-h-64 flex-col">
             {traces.length === 0 ? (
               <p className="px-[18px] py-4 font-mono text-[13.5px] text-ink-tertiary">
-                Search, open, refusal, or fallback. Nothing else is written here.
+                Recherche, ouverture, refus, ou repli. Rien d’autre n’est écrit ici.
               </p>
             ) : (
               traces.map((trace, index) => (
@@ -257,13 +257,13 @@ export function AgentConsole({ serviceNames }: { serviceNames: string[] }) {
             )}
           </div>
           <p className="bg-surface px-[18px] py-3.5 font-mono text-[13px] text-ink-tertiary">
-            Measured in the header · budget {budgetMs.toLocaleString("en-US")} ms
+            Mesuré dans l’en-tête · budget {budgetMs.toLocaleString("fr-FR")} ms
           </p>
         </section>
       </div>
 
       <details className="mt-10 font-mono text-[13.5px] text-ink-tertiary">
-        <summary className="cursor-pointer">Ledger · {serviceNames.length} rules</summary>
+        <summary className="cursor-pointer">Registre · {serviceNames.length} règles</summary>
         <p className="mt-3 max-w-3xl leading-relaxed text-ink-secondary">{serviceNames.join(" · ")}</p>
       </details>
     </div>

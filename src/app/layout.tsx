@@ -27,13 +27,13 @@ const mono = IBM_Plex_Mono({
 export const metadata: Metadata = {
   title: "next-agent-trace",
   description:
-    "A closed ledger of run rules. The agent may quote a card it opened. If the card is missing, the run stops.",
+    "Registre fermé de vingt règles. L’agent cite une carte qu’il a ouverte. Si elle n’y est pas, il s’arrête.",
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html
-      lang="en"
+      lang="fr"
       className={`${display.variable} ${sans.variable} ${mono.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col bg-page font-sans text-ink">{children}</body>
