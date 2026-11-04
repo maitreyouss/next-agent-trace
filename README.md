@@ -1,6 +1,6 @@
 # next-agent-trace
 
-A run earns its sentence. The agent quotes a closed ledger of twenty run rules. It may speak only after a card is opened. If the card is not there, the run stops.
+Il cite la carte ouverte. Vingt règles, écrites une fois. S’il n’a pas ouvert la carte, il s’arrête.
 
 [![ci](https://github.com/maitreyouss/next-agent-trace/actions/workflows/ci.yml/badge.svg)](https://github.com/maitreyouss/next-agent-trace/actions/workflows/ci.yml)
 
@@ -52,9 +52,9 @@ Three frozen cases, no model call, also replayed in the browser:
 
 `DEMO=true`, no key. A visitor replays the three runs from the page:
 
-- What does the refusal card allow?
-- Who keeps the atlas card?
-- Open the fallback card. The tool-failed control must be on.
+- Que permet la carte Refusal ?
+- Qui garde la carte atlas ?
+- Ouvre la carte Fallback. Le bouton « Outil en échec » doit être celui qui lance.
 
 ## License
 
